@@ -6,5 +6,8 @@ import lombok.NoArgsConstructor;
 public enum OrderType {
     CLEANING,
     SHOPPING,
-    REPAIRING
+    REPAIRING,
+    CHILDREN,
+    EDUCATIONAL,
+    PHYSICAL_WORK,
 }
