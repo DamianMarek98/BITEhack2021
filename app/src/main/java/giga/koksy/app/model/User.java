@@ -24,4 +24,6 @@ public class User {
     @OneToMany(mappedBy = "user")
     List<UserOrder> userOrders;
 
+    @OneToMany(mappedBy = "creator")
+    List<Order> createdOrders;
 }

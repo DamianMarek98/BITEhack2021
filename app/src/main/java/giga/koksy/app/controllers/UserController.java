@@ -3,9 +3,11 @@ package giga.koksy.app.controllers;
 import giga.koksy.app.dto.UserDto;
 import giga.koksy.app.model.User;
 import giga.koksy.app.service.UserService;
+import net.minidev.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,19 +25,23 @@ public class UserController {
     }
 
     @PostMapping(value = "/login", produces = MediaType.APPLICATION_JSON_VALUE)
-    private String login(@RequestBody UserDto userDto) {
+    private ResponseEntity<Object> login(@RequestBody UserDto userDto) {
         Optional<User> user = userService.findUserByDetails(userDto.getUsername(), userDto.getPassword());
         if (user.isPresent()) {
-            return user.get().getUsername();
+            JSONObject json = new JSONObject();
+            json.put("value", user.get().getUsername());
+            return new ResponseEntity<>(json, HttpStatus.OK);
         } else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
         }
     }
 
     @PostMapping(value = "/register", produces = MediaType.APPLICATION_JSON_VALUE)
-    private String register(@RequestBody UserDto userDto) {
+    private ResponseEntity<Object> register(@RequestBody UserDto userDto) {
         if (userService.addUser(userDto)) {
-            return userDto.getUsername();
+            JSONObject json = new JSONObject();
+            json.put("value", userDto.getUsername());
+            return new ResponseEntity<>(json, HttpStatus.OK);
         } else {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "User with given username exists");
         }

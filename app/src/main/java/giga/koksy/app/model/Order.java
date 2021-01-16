@@ -28,4 +28,8 @@ public class Order {
 
     @OneToMany(mappedBy = "order")
     private List<UserOrder> userOrders;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User creator;
 }

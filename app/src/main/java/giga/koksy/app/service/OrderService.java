@@ -22,6 +22,7 @@ public class OrderService {
     }
 
     public List<OrderDto> findUserOrders(@NonNull Long userId) {
-        return OrderMapper.map(orderRepository.findUserOrders(userId));
+        return OrderMapper.mapOrdersDto(orderRepository.findUserOrders(userId));
     }
+
 }
