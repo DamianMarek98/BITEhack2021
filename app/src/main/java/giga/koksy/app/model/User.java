@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity(name = "bitehack_user")
 @Setter
@@ -19,4 +20,8 @@ public class User {
 
     @Column(length = 20)
     private String password;
+
+    @OneToMany(mappedBy = "user")
+    List<UserOrder> userOrders;
+
 }

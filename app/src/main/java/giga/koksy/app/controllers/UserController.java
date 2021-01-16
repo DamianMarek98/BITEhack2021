@@ -28,7 +28,16 @@ public class UserController {
         if (user.isPresent()) {
             return user.get().getUsername();
         } else {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "xd");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
+        }
+    }
+
+    @PostMapping(value = "/register", produces = MediaType.APPLICATION_JSON_VALUE)
+    private String register(@RequestBody UserDto userDto) {
+        if (userService.addUser(userDto)) {
+            return userDto.getUsername();
+        } else {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "User with given username exists");
         }
     }
 }

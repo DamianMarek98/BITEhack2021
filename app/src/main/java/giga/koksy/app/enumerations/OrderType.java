@@ -9,5 +9,5 @@ public enum OrderType {
     REPAIRING,
     CHILDREN,
     EDUCATIONAL,
-    PHYSICAL_WORK,
+    PHYSICAL_WORK
 }
