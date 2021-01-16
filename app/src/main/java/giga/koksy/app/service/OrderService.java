@@ -1,5 +1,7 @@
 package giga.koksy.app.service;
 
+import giga.koksy.app.model.Order;
+import giga.koksy.app.repository.OrderRepository;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -10,9 +12,9 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class OrderService {
 
-    private final OrderService order;
+    private final OrderRepository orderRepository;
 
-    public Optional<OrderService> findById(@NonNull Long id) {
-        return order.findById(id);
+    public Optional<Order> findById(@NonNull Long id) {
+        return orderRepository.findById(id);
     }
 }

@@ -5,7 +5,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 
-@Entity(name = "order")
+@Entity(name = "bitehack_order")
 @Setter
 @Getter
 
