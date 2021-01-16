@@ -26,6 +26,9 @@ public class Order {
     @Column
     private OrderType orderType;
 
+    @Column
+    private boolean isAccepted = false;
+
     @OneToMany(mappedBy = "order")
     private List<UserOrder> userOrders;
 

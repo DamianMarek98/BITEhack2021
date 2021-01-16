@@ -25,4 +25,8 @@ public class OrderService {
         return OrderMapper.mapOrdersDto(orderRepository.findUserOrders(userId));
     }
 
+    public void updateOrder(@NonNull Order order) {
+        orderRepository.saveAndFlush(order);
+    }
+
 }

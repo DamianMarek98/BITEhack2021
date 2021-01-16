@@ -51,6 +51,9 @@ public class OrderController {
             if (order.isPresent()) {
                 boolean status = userOrderService.addUserOrder(user.get(), order.get(), userOrderDto.isAccepted());
                 if (status) {
+                    Order toUpdate = order.get();
+                    toUpdate.setAccepted(true);
+                    orderService.updateOrder(toUpdate);
                     return "operation successful";
                 } else {
                     throw new ResponseStatusException(HttpStatus.CONFLICT, "UserOrder exists");
