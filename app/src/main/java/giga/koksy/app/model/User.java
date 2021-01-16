@@ -5,7 +5,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 
-@Entity(name = "bithack_user")
+@Entity(name = "bitehack_user")
 @Setter
 @Getter
 public class User {
