@@ -18,4 +18,7 @@ public class UserService {
         return userRepository.findById(id);
     }
 
+    public Optional<User> findUserByDetails(@NonNull String username, @NonNull String password) {
+        return Optional.empty();
+    }
 }
