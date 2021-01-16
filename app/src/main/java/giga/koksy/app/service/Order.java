@@ -10,11 +10,11 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class UserService {
+public class Order {
 
-    private final UserRepository userRepository;
+    private final Order order;
 
-    public Optional<User> findById(@NonNull Long id) {
-        return userRepository.findById(id);
+    public Optional<Order> findById(@NonNull Long id) {
+        return order.findById(id);
     }
 }

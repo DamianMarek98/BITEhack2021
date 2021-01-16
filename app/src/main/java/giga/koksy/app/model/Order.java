@@ -5,18 +5,19 @@ import lombok.Setter;
 
 import javax.persistence.*;
 
-@Entity(name = "app_user")
+@Entity(name = "order")
 @Setter
 @Getter
-public class User {
+
+public class Order {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(length = 20)
-    private String username;
+    @Column(length = 32)
+    private String name;
 
-    @Column(length = 20)
-    private String password;
+    @Column(length = 512)
+    private String description;
 }
