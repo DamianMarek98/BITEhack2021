@@ -1,5 +1,6 @@
 package giga.koksy.app.controllers;
 
+import giga.koksy.app.dto.OrderDto;
 import giga.koksy.app.dto.UserOrderDto;
 import giga.koksy.app.model.Order;
 import giga.koksy.app.model.User;
@@ -64,6 +65,19 @@ public class OrderController {
         throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User or Order not found");
     }
 
+    @PostMapping(value = "/save-order", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.OK)
+    public String saveOrder(HttpServletRequest request, @RequestBody OrderDto orderDto) {
+        String token = request.getHeader("Authorization");
+        Optional<User> user = userService.findUserByUsername(token);
+        if (user.isPresent()) {
+            orderService.addOrder(user.get(), orderDto);
+            return "operation successful";
+        }
+
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
+    }
+
     @GetMapping(value = "/user-created-orders", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> createdUserOrders(HttpServletRequest request) {
         String token = request.getHeader("Authorization");
@@ -74,7 +88,7 @@ public class OrderController {
         return new ResponseEntity<>(json, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/get-unassigned-orders", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/unassigned-orders", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> getUnassignedOrders(HttpServletRequest request) {
         String token = request.getHeader("Authorization");
         Optional<User> user = userService.findUserByUsername(token);
