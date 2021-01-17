@@ -1,1 +1,1 @@
-# BITEhack2021
+# BITEhack2021 spring backend app
