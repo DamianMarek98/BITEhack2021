@@ -51,6 +51,9 @@ public class OrderController {
             if (order.isPresent()) {
                 boolean status = userOrderService.addUserOrder(user.get(), order.get(), userOrderDto.isAccepted());
                 if (status) {
+                    Order toUpdate = order.get();
+                    toUpdate.setAccepted(true);
+                    orderService.updateOrder(toUpdate);
                     return "operation successful";
                 } else {
                     throw new ResponseStatusException(HttpStatus.CONFLICT, "UserOrder exists");
@@ -67,6 +70,16 @@ public class OrderController {
         Optional<User> user = userService.findUserByUsername(token);
         JSONObject json = new JSONObject();
         json.put("createdUsersOrders", user.isPresent() ? orderService.findCreatedUserOrders(user.get().getId()) : Collections.emptyList());
+
+        return new ResponseEntity<>(json, HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/get-unassigned-orders", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Object> getUnassignedOrders(HttpServletRequest request) {
+        String token = request.getHeader("Authorization");
+        Optional<User> user = userService.findUserByUsername(token);
+        JSONObject json = new JSONObject();
+        json.put("unassignedOrders", user.isPresent() ? orderService.findUnassignedOrders(user.get().getId()) : Collections.emptyList());
 
         return new ResponseEntity<>(json, HttpStatus.OK);
     }

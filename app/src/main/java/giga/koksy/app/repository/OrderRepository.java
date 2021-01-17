@@ -16,6 +16,12 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
             "WHERE uo.user.id=(:userId) ")
     List<Order> findUserOrders(@Param(value = "userId") Long userId);
 
+
+
+    @Query("SELECT o FROM bitehack_order o WHERE o.isAccepted = false " +
+            "AND o.creator.id!=(:userId) ")
+    List<Order> findUnassignedOrders(@Param(value = "userID") Long userId);
+
     @Query("SELECT o FROM bitehack_order o WHERE o.creator.id=(:userId) ")
     List<Order> findCreatedUserOrders(@Param(value = "userId") Long userId);
 }
