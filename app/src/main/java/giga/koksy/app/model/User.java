@@ -11,19 +11,14 @@ import java.util.List;
 @Getter
 public class User {
 
+    @OneToMany(mappedBy = "user")
+    List<UserOrder> userOrders;
+    @OneToMany(mappedBy = "creator")
+    List<Order> createdOrders;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     @Column(length = 20)
     private String username;
-
-    @Column(length = 20)
     private String password;
-
-    @OneToMany(mappedBy = "user")
-    List<UserOrder> userOrders;
-
-    @OneToMany(mappedBy = "creator")
-    List<Order> createdOrders;
 }

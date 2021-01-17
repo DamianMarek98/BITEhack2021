@@ -37,7 +37,7 @@ public class OrderController {
         String token = request.getHeader("Authorization");
         Optional<User> user = userService.findUserByUsername(token);
         JSONObject json = new JSONObject();
-        json.put("userOrders", user.isPresent() ? orderService.findUserOrders(user.get().getId()) : Collections.emptyList());
+        json.put("value", user.isPresent() ? orderService.findUserOrders(user.get().getId()) : Collections.emptyList());
 
         return new ResponseEntity<>(json, HttpStatus.OK);
     }
@@ -83,7 +83,7 @@ public class OrderController {
         String token = request.getHeader("Authorization");
         Optional<User> user = userService.findUserByUsername(token);
         JSONObject json = new JSONObject();
-        json.put("createdUsersOrders", user.isPresent() ? orderService.findCreatedUserOrders(user.get().getId()) : Collections.emptyList());
+        json.put("value", user.isPresent() ? orderService.findCreatedUserOrders(user.get().getId()) : Collections.emptyList());
 
         return new ResponseEntity<>(json, HttpStatus.OK);
     }
@@ -93,7 +93,7 @@ public class OrderController {
         String token = request.getHeader("Authorization");
         Optional<User> user = userService.findUserByUsername(token);
         JSONObject json = new JSONObject();
-        json.put("unassignedOrders", user.isPresent() ? orderService.findUnassignedOrders(user.get().getId()) : Collections.emptyList());
+        json.put("value", user.isPresent() ? orderService.findUnassignedOrders(user.get().getId()) : Collections.emptyList());
 
         return new ResponseEntity<>(json, HttpStatus.OK);
     }

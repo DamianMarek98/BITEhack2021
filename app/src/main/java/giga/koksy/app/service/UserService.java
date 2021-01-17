@@ -5,6 +5,7 @@ import giga.koksy.app.model.User;
 import giga.koksy.app.repository.UserRepository;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -14,6 +15,8 @@ import java.util.Optional;
 public class UserService {
 
     private final UserRepository userRepository;
+
+    private final PasswordEncoder passwordEncoder;
 
     public Optional<User> findById(@NonNull Long id) {
         return userRepository.findById(id);
@@ -31,7 +34,7 @@ public class UserService {
 
         User user = new User();
         user.setUsername(userDto.getUsername());
-        user.setPassword(userDto.getPassword());
+        user.setPassword(passwordEncoder.encode(userDto.getPassword()));
         userRepository.saveAndFlush(user);
         return true;
     }
