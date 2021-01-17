@@ -63,4 +63,14 @@ public class OrderController {
 
         throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User or Order not found");
     }
+
+    @GetMapping(value = "/get-unassigned-orders", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Object> getUnassignedOrders(HttpServletRequest request) {
+        String token = request.getHeader("Authorization");
+        Optional<User> user = userService.findUserByUsername(token);
+        JSONObject json = new JSONObject();
+        json.put("unassignedOrders", user.isPresent() ? orderService.findUnassignedOrders(user.get().getId()) : Collections.emptyList());
+
+        return new ResponseEntity<>(json, HttpStatus.OK);
+    }
 }

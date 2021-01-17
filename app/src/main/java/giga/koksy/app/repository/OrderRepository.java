@@ -18,7 +18,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
 
 
-/*    @Query("SELECT o FROM bitehack_order o" +
-            "LEFT JOIN bitehack_user_order ")
-*/
+    @Query("SELECT o FROM bitehack_order o WHERE o.isAccepted = false " +
+            "AND o.creator.id!=(:userId) ")
+    List<Order> findUnassignedOrders(@Param(value = "userID") Long userId);
 }
