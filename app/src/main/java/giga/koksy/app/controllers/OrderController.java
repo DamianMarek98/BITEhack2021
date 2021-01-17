@@ -35,9 +35,8 @@ public class OrderController {
     }
 
     @GetMapping(value = "/user-orders", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Object> userOrders(HttpServletRequest request) {
-        String token = request.getHeader("Authorization");
-        Optional<User> user = userService.findUserByUsername(token);
+    public ResponseEntity<JSONObject> userOrders(HttpServletRequest request) {
+        Optional<User> user = extractUserFromToken(request);
         JSONObject json = new JSONObject();
         json.put("value", user.isPresent() ? orderService.findUserOrders(user.get().getId()) : Collections.emptyList());
 
@@ -47,8 +46,7 @@ public class OrderController {
     @PostMapping(value = "/save-user-order", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     public String saveUserOrder(HttpServletRequest request, @RequestBody UserOrderDto userOrderDto) {
-        String token = request.getHeader("Authorization");
-        Optional<User> user = userService.findUserByUsername(token);
+        Optional<User> user = extractUserFromToken(request);
         if (user.isPresent()) {
             Optional<Order> order = orderService.findById(userOrderDto.getOrderId());
             if (order.isPresent()) {
@@ -70,8 +68,7 @@ public class OrderController {
     @PostMapping(value = "/save-order", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     public String saveOrder(HttpServletRequest request, @RequestBody OrderDto orderDto) {
-        String token = request.getHeader("Authorization");
-        Optional<User> user = userService.findUserByUsername(token);
+        Optional<User> user = extractUserFromToken(request);
         if (user.isPresent()) {
             if (user.get().getPoints() < 1) {
                 throw new ResponseStatusException(HttpStatus.FORBIDDEN, "User has not enough points");
@@ -87,9 +84,8 @@ public class OrderController {
     }
 
     @GetMapping(value = "/user-created-orders", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Object> createdUserOrders(HttpServletRequest request) {
-        String token = request.getHeader("Authorization");
-        Optional<User> user = userService.findUserByUsername(token);
+    public ResponseEntity<JSONObject> createdUserOrders(HttpServletRequest request) {
+        Optional<User> user = extractUserFromToken(request);
         JSONObject json = new JSONObject();
         json.put("value", user.isPresent() ? orderService.findCreatedUserOrders(user.get().getId()) : Collections.emptyList());
 
@@ -97,9 +93,8 @@ public class OrderController {
     }
 
     @GetMapping(value = "/unassigned-orders", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Object> getUnassignedOrders(HttpServletRequest request) {
-        String token = request.getHeader("Authorization");
-        Optional<User> user = userService.findUserByUsername(token);
+    public ResponseEntity<JSONObject> getUnassignedOrders(HttpServletRequest request) {
+        Optional<User> user = extractUserFromToken(request);
         JSONObject json = new JSONObject();
         json.put("value", user.isPresent() ? orderService.findUnassignedOrders(user.get().getId()) : Collections.emptyList());
 
@@ -109,8 +104,7 @@ public class OrderController {
     @PostMapping(value = "/finish-order", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     public String finishOrder(HttpServletRequest request, @RequestBody OrderDto orderDto) {
-        String token = request.getHeader("Authorization");
-        Optional<User> user = userService.findUserByUsername(token);
+        Optional<User> user = extractUserFromToken(request);
         if (user.isPresent()) {
             boolean result = orderService.finishOrder(user.get(), orderDto.getId());
             if (result) {
@@ -119,11 +113,16 @@ public class OrderController {
                     User userToUpdate = userOrder.get().getUser();
                     userToUpdate.incrementPoints(2);
                     userService.updateUser(userToUpdate);
-                    return SUCCESSFUL_OPERATION;
+                    return SUCCESSFUL_OPERATION; //todo should i return status in json here? + request for user points
                 }
             }
         }
 
         throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
+    }
+
+    private Optional<User> extractUserFromToken(HttpServletRequest request) {
+        String token = request.getHeader("Authorization");
+        return userService.findUserByUsername(token);
     }
 }
