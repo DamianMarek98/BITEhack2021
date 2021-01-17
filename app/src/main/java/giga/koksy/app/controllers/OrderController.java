@@ -24,6 +24,7 @@ import java.util.Optional;
 @RestController
 public class OrderController {
 
+    public static final String JSON_VALUE = "value";
     private final OrderService orderService;
     private final UserService userService;
     private final UserOrderService userOrderService;
@@ -39,7 +40,7 @@ public class OrderController {
     public ResponseEntity<JSONObject> userOrders(HttpServletRequest request) {
         Optional<User> user = extractUserFromToken(request);
         JSONObject json = new JSONObject();
-        json.put("value", user.isPresent() ? orderService.findUserOrders(user.get().getId()) : Collections.emptyList());
+        json.put(JSON_VALUE, user.isPresent() ? orderService.findUserOrders(user.get().getId()) : Collections.emptyList());
 
         return new ResponseEntity<>(json, HttpStatus.OK);
     }
@@ -88,7 +89,7 @@ public class OrderController {
     public ResponseEntity<JSONObject> createdUserOrders(HttpServletRequest request) {
         Optional<User> user = extractUserFromToken(request);
         JSONObject json = new JSONObject();
-        json.put("value", user.isPresent() ? orderService.findCreatedUserOrders(user.get().getId()) : Collections.emptyList());
+        json.put(JSON_VALUE, user.isPresent() ? orderService.findCreatedUserOrders(user.get().getId()) : Collections.emptyList());
 
         return new ResponseEntity<>(json, HttpStatus.OK);
     }
@@ -98,10 +99,10 @@ public class OrderController {
         Optional<User> user = extractUserFromToken(request);
         JSONObject json = new JSONObject();
         if (orderType == null) {
-            json.put("value", user.isPresent() ? orderService.findUnassignedOrders(user.get().getId()) : Collections.emptyList());
+            json.put(JSON_VALUE, user.isPresent() ? orderService.findUnassignedOrders(user.get().getId()) : Collections.emptyList());
         } else {
             OrderType ot = OrderType.valueOf(orderType);
-            json.put("value", user.isPresent() ? orderService.findUnassignedOrders(user.get().getId(), ot) : Collections.emptyList());
+            json.put(JSON_VALUE, user.isPresent() ? orderService.findUnassignedOrders(user.get().getId(), ot) : Collections.emptyList());
         }
 
         return new ResponseEntity<>(json, HttpStatus.OK);
@@ -121,7 +122,7 @@ public class OrderController {
                     userService.updateUser(userToUpdate);
 
                     JSONObject json = new JSONObject();
-                    json.put("value", orderService.findCreatedUserOrders(userToUpdate.getId()));
+                    json.put(JSON_VALUE, orderService.findCreatedUserOrders(userToUpdate.getId()));
                     return new ResponseEntity<>(json, HttpStatus.OK);
                 }
             }

@@ -23,6 +23,7 @@ import java.util.Optional;
 @RestController
 public class UserController {
 
+    public static final String JSON_VALUE = "value";
     private final UserService userService;
 
     private final AuthenticationService authenticationService;
@@ -39,7 +40,7 @@ public class UserController {
         boolean isPasswordMatch = passwordEncoder.matches(userDto.getPassword(), userDetails.getPassword());
         if (isPasswordMatch) {
             JSONObject json = new JSONObject();
-            json.put("value", userDetails.getUsername());
+            json.put(JSON_VALUE, userDetails.getUsername());
             return new ResponseEntity<>(json, HttpStatus.OK);
         } else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
@@ -50,7 +51,7 @@ public class UserController {
     private ResponseEntity<JSONObject> register(@RequestBody UserDto userDto) {
         if (userService.addUser(userDto)) {
             JSONObject json = new JSONObject();
-            json.put("value", userDto.getUsername());
+            json.put(JSON_VALUE, userDto.getUsername());
             return new ResponseEntity<>(json, HttpStatus.OK);
         } else {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "User with given username exists");
@@ -63,11 +64,11 @@ public class UserController {
         Optional<User> user = userService.findUserByUsername(token);
         JSONObject json = new JSONObject();
         if (user.isPresent()) {
-            json.put("value", user.get().getPoints());
+            json.put(JSON_VALUE, user.get().getPoints());
             return new ResponseEntity<>(json, HttpStatus.OK);
         }
 
-        json.put("value", 0);
+        json.put(JSON_VALUE, 0);
         return new ResponseEntity<>(json, HttpStatus.NOT_FOUND);
     }
 }

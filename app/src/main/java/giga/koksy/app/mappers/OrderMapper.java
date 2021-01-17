@@ -3,10 +3,13 @@ package giga.koksy.app.mappers;
 import giga.koksy.app.dto.OrderDto;
 import giga.koksy.app.enumerations.OrderType;
 import giga.koksy.app.model.Order;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class OrderMapper {
     public static OrderDto map(Order order) {
         OrderDto orderDto = new OrderDto();
