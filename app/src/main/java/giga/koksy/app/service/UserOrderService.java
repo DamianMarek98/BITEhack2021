@@ -32,4 +32,8 @@ public class UserOrderService {
         userOrderRepository.saveAndFlush(userOrder);
         return true;
     }
+
+    public Optional<UserOrder> findByOrderId(@NonNull Long orderId) {
+        return userOrderRepository.findUserOrderByOrderId(orderId);
+    }
 }

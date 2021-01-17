@@ -21,4 +21,17 @@ public class User {
     @Column(length = 20)
     private String username;
     private String password;
+    private int points = 2;
+
+    public void decreasePoints(int amount) {
+        if (points - amount >= 0) {
+            points = points - amount;
+        }
+    }
+
+    public void incrementPoints(int amount) {
+        if (points + amount >= 0) {
+            points = points + amount;
+        }
+    }
 }

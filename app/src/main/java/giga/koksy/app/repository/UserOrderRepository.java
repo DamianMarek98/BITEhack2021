@@ -14,4 +14,6 @@ public interface UserOrderRepository extends JpaRepository<UserOrder, Long> {
     @Query("SELECT uo FROM bitehack_user_order uo WHERE uo.user.id=(:userId) AND uo.order.id=(:orderId)")
     Optional<UserOrder> findUserOrderByDetails(@Param("userId") Long userId, @Param("orderId") Long orderId);
 
+    @Query("SELECT uo FROM bitehack_user_order uo WHERE uo.order.id=(:orderId) AND uo.isAccepted = true")
+    Optional<UserOrder> findUserOrderByOrderId(@Param("orderId") Long orderId);
 }

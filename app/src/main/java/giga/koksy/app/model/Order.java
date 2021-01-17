@@ -29,6 +29,9 @@ public class Order {
     @Column
     private boolean isAccepted = false;
 
+    @Column
+    private boolean isFinished = false;
+
     @OneToMany(mappedBy = "order")
     private List<UserOrder> userOrders;
 

@@ -8,6 +8,7 @@ import giga.koksy.app.model.User;
 import giga.koksy.app.repository.OrderRepository;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -37,7 +38,7 @@ public class OrderService {
     }
 
     public List<OrderDto> findUnassignedOrders(@NonNull Long userId) {
-        return orderRepository.findUnassignedOrders(userId).stream().map(OrderMapper::map).collect(Collectors.toList());
+        return orderRepository.findUnassignedOrders(userId, PageRequest.of(0, 10)).stream().map(OrderMapper::map).collect(Collectors.toList());
     }
 
     public void addOrder(@NonNull User user, @NonNull OrderDto orderDto) {
@@ -47,6 +48,20 @@ public class OrderService {
         order.setOrderType(OrderType.valueOf(orderDto.getOrderType()));
         order.setCreator(user);
         orderRepository.saveAndFlush(order);
+    }
+
+    public boolean finishOrder(@NonNull User user, @NonNull Long orderId) {
+        Optional<Order> optionalOrder = orderRepository.findById(orderId);
+        if (optionalOrder.isPresent()) {
+            Order order = optionalOrder.get();
+            if (order.getCreator().equals(user)) {
+                order.setFinished(true);
+                orderRepository.saveAndFlush(order);
+                return true;
+            }
+        }
+
+        return false;
     }
 
 }

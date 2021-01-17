@@ -4,6 +4,7 @@ import giga.koksy.app.dto.OrderDto;
 import giga.koksy.app.dto.UserOrderDto;
 import giga.koksy.app.model.Order;
 import giga.koksy.app.model.User;
+import giga.koksy.app.model.UserOrder;
 import giga.koksy.app.service.OrderService;
 import giga.koksy.app.service.UserOrderService;
 import giga.koksy.app.service.UserService;
@@ -25,6 +26,7 @@ public class OrderController {
     private final OrderService orderService;
     private final UserService userService;
     private final UserOrderService userOrderService;
+    private static final String SUCCESSFUL_OPERATION = "operation successful";
 
     public OrderController(@Autowired OrderService orderService, @Autowired UserService userService, @Autowired UserOrderService userOrderService) {
         this.orderService = orderService;
@@ -53,9 +55,9 @@ public class OrderController {
                 boolean status = userOrderService.addUserOrder(user.get(), order.get(), userOrderDto.isAccepted());
                 if (status) {
                     Order toUpdate = order.get();
-                    toUpdate.setAccepted(true);
+                    toUpdate.setAccepted(userOrderDto.isAccepted());
                     orderService.updateOrder(toUpdate);
-                    return "operation successful";
+                    return SUCCESSFUL_OPERATION;
                 } else {
                     throw new ResponseStatusException(HttpStatus.CONFLICT, "UserOrder exists");
                 }
@@ -71,8 +73,14 @@ public class OrderController {
         String token = request.getHeader("Authorization");
         Optional<User> user = userService.findUserByUsername(token);
         if (user.isPresent()) {
+            if (user.get().getPoints() < 1) {
+                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "User has not enough points");
+            }
             orderService.addOrder(user.get(), orderDto);
-            return "operation successful";
+            User userToUpdate = user.get();
+            userToUpdate.decreasePoints(1);
+            userService.updateUser(userToUpdate);
+            return SUCCESSFUL_OPERATION;
         }
 
         throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
@@ -96,5 +104,26 @@ public class OrderController {
         json.put("value", user.isPresent() ? orderService.findUnassignedOrders(user.get().getId()) : Collections.emptyList());
 
         return new ResponseEntity<>(json, HttpStatus.OK);
+    }
+
+    @PostMapping(value = "/finish-order", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.OK)
+    public String finishOrder(HttpServletRequest request, @RequestBody OrderDto orderDto) {
+        String token = request.getHeader("Authorization");
+        Optional<User> user = userService.findUserByUsername(token);
+        if (user.isPresent()) {
+            boolean result = orderService.finishOrder(user.get(), orderDto.getId());
+            if (result) {
+                Optional<UserOrder> userOrder = userOrderService.findByOrderId(orderDto.getId());
+                if (userOrder.isPresent()) {
+                    User userToUpdate = userOrder.get().getUser();
+                    userToUpdate.incrementPoints(2);
+                    userService.updateUser(userToUpdate);
+                    return SUCCESSFUL_OPERATION;
+                }
+            }
+        }
+
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
     }
 }
