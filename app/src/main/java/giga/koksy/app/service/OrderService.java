@@ -25,4 +25,8 @@ public class OrderService {
         return OrderMapper.mapOrdersDto(orderRepository.findUserOrders(userId));
     }
 
+    public List<OrderDto> findCreatedUserOrders(@NonNull Long userId){
+        return OrderMapper.mapOrdersDto(orderRepository.findCreatedUserOrders(userId));
+    }
+
 }
