@@ -15,4 +15,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
             "LEFT JOIN bitehack_user_order uo on uo.id = o.id " +
             "WHERE uo.user.id=(:userId) ")
     List<Order> findUserOrders(@Param(value = "userId") Long userId);
+
+    @Query("SELECT o FROM bitehack_order o WHERE o.creator.id=(:userId) ")
+    List<Order> findCreatedUserOrders(@Param(value = "userId") Long userId);
 }
