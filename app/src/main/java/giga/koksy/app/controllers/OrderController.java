@@ -109,7 +109,7 @@ public class OrderController {
 
     @PostMapping(value = "/finish-order", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    public String finishOrder(HttpServletRequest request, @RequestBody OrderDto orderDto) {
+    public ResponseEntity<JSONObject> finishOrder(HttpServletRequest request, @RequestBody OrderDto orderDto) {
         Optional<User> user = extractUserFromToken(request);
         if (user.isPresent()) {
             boolean result = orderService.finishOrder(user.get(), orderDto.getId());
@@ -119,7 +119,10 @@ public class OrderController {
                     User userToUpdate = userOrder.get().getUser();
                     userToUpdate.incrementPoints(2);
                     userService.updateUser(userToUpdate);
-                    return SUCCESSFUL_OPERATION; //todo should i return status in json here?
+
+                    JSONObject json = new JSONObject();
+                    json.put("value", orderService.findCreatedUserOrders(userToUpdate.getId()));
+                    return new ResponseEntity<>(json, HttpStatus.OK);
                 }
             }
         }
