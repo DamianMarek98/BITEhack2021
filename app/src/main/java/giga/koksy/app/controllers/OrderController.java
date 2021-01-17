@@ -2,6 +2,7 @@ package giga.koksy.app.controllers;
 
 import giga.koksy.app.dto.OrderDto;
 import giga.koksy.app.dto.UserOrderDto;
+import giga.koksy.app.enumerations.OrderType;
 import giga.koksy.app.model.Order;
 import giga.koksy.app.model.User;
 import giga.koksy.app.model.UserOrder;
@@ -93,10 +94,15 @@ public class OrderController {
     }
 
     @GetMapping(value = "/unassigned-orders", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<JSONObject> getUnassignedOrders(HttpServletRequest request) {
+    public ResponseEntity<JSONObject> getUnassignedOrders(HttpServletRequest request, @RequestParam(required = false) String orderType) {
         Optional<User> user = extractUserFromToken(request);
         JSONObject json = new JSONObject();
-        json.put("value", user.isPresent() ? orderService.findUnassignedOrders(user.get().getId()) : Collections.emptyList());
+        if (orderType == null) {
+            json.put("value", user.isPresent() ? orderService.findUnassignedOrders(user.get().getId()) : Collections.emptyList());
+        } else {
+            OrderType ot = OrderType.valueOf(orderType);
+            json.put("value", user.isPresent() ? orderService.findUnassignedOrders(user.get().getId(), ot) : Collections.emptyList());
+        }
 
         return new ResponseEntity<>(json, HttpStatus.OK);
     }
@@ -113,7 +119,7 @@ public class OrderController {
                     User userToUpdate = userOrder.get().getUser();
                     userToUpdate.incrementPoints(2);
                     userService.updateUser(userToUpdate);
-                    return SUCCESSFUL_OPERATION; //todo should i return status in json here? + request for user points
+                    return SUCCESSFUL_OPERATION; //todo should i return status in json here?
                 }
             }
         }

@@ -41,6 +41,10 @@ public class OrderService {
         return orderRepository.findUnassignedOrders(userId, PageRequest.of(0, 10)).stream().map(OrderMapper::map).collect(Collectors.toList());
     }
 
+    public List<OrderDto> findUnassignedOrders(@NonNull Long userId, @NonNull OrderType orderType) {
+        return orderRepository.findUnassignedOrders(userId, orderType, PageRequest.of(0, 10)).stream().map(OrderMapper::map).collect(Collectors.toList());
+    }
+
     public void addOrder(@NonNull User user, @NonNull OrderDto orderDto) {
         Order order = new Order();
         order.setName(orderDto.getName());
